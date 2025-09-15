@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen bg-white text-gray-900 p-6 sm:p-12 md:p-16 overflow-x-hidden relative">
+
+  <!-- Floating Gradient Violet-Blue Bubbles -->
+  <div class="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+    <div class="absolute w-16 h-16 rounded-full opacity-30 animate-bubble" style="background: radial-gradient(circle at 30% 30%, rgba(138, 43, 226, 0.5), rgba(0, 0, 255, 0.3)); top:10%; left:5%;"></div>
+    <div class="absolute w-20 h-20 rounded-full opacity-25 animate-bubble delay-2000" style="background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.4), rgba(0, 191, 255, 0.3)); top:50%; left:80%;"></div>
+    <div class="absolute w-12 h-12 rounded-full opacity-20 animate-bubble delay-4000" style="background: radial-gradient(circle at 70% 30%, rgba(138, 43, 226, 0.3), rgba(65,105,225,0.2)); top:80%; left:40%;"></div>
+    <div class="absolute w-24 h-24 rounded-full opacity-15 animate-bubble delay-6000" style="background: radial-gradient(circle at 30% 70%, rgba(75,0,130,0.3), rgba(0,0,255,0.2)); top:30%; left:60%;"></div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="text-center mb-20 relative z-10">
+    <h1 class="text-5xl font-extrabold mb-4 animate-fadeInUp">About Our App</h1>
+    <p class="text-lg text-gray-600 animate-fadeInUp delay-100">
+      Discover our journey, meet our founders, and see how we empower thousands of users worldwide with the ultimate premium currency converter.
+    </p>
+  </section>
+
+  <!-- History / Story Section -->
+  <section class="max-w-5xl mx-auto mb-20 relative z-10">
+    <h2 class="text-3xl font-bold mb-8 text-center animate-fadeIn">Our Journey</h2>
+    <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
+      <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-gray-200 hover:scale-105 transition-transform animate-slideInLeft">
+        <h3 class="text-xl font-semibold mb-2 text-blue-500">Idea & Vision</h3>
+        <p class="text-gray-700">In 2024, we started with a simple goal: fast, reliable, and intuitive currency conversion for everyone.</p>
+      </div>
+      <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-gray-200 hover:scale-105 transition-transform animate-slideInUp delay-100">
+        <h3 class="text-xl font-semibold mb-2 text-purple-500">Development</h3>
+        <p class="text-gray-700">Built with modern technologies, offering accurate conversions and a smooth user experience for both free and premium users.</p>
+      </div>
+      <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-gray-200 hover:scale-105 transition-transform animate-slideInRight delay-200">
+        <h3 class="text-xl font-semibold mb-2 text-green-500">Growth</h3>
+        <p class="text-gray-700">Now serving thousands of users worldwide, with advanced settings, real-time updates, and premium features.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="max-w-6xl mx-auto mb-20 relative z-10">
+    <h2 class="text-3xl font-bold mb-10 text-center animate-fadeIn">Our Impact</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+      <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-8 shadow-lg border border-gray-200 hover:scale-105 transition-transform animate-slideInUp">
+        <h3 class="text-4xl font-bold text-blue-500 counter" data-target="12000">0</h3>
+        <p class="text-gray-700 mt-2">Active Users</p>
+      </div>
+      <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-8 shadow-lg border border-gray-200 hover:scale-105 transition-transform animate-slideInUp delay-100">
+        <h3 class="text-4xl font-bold text-purple-500 counter" data-target="5">0</h3>
+        <p class="text-gray-700 mt-2">Founders</p>
+      </div>
+      <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-8 shadow-lg border border-gray-200 hover:scale-105 transition-transform animate-slideInUp delay-200">
+        <h3 class="text-4xl font-bold text-green-500 counter" data-target="50">0</h3>
+        <p class="text-gray-700 mt-2">Supported Currencies</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Founders Section -->
+  <section class="max-w-6xl mx-auto mb-20 relative z-10">
+    <h2 class="text-3xl font-bold mb-10 text-center animate-fadeIn">Meet Our Founders</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-6">
+      <!-- Founder Cards -->
+      <div class="group bg-white/20 backdrop-blur-lg rounded-2xl p-4 shadow-lg border border-gray-200 hover:scale-105 transition-transform text-center animate-slideInUp">
+        <img src="/static/images/founder1.jpg" alt="John Doe" class="w-24 h-24 mx-auto rounded-full mb-3 border-2 border-blue-500 object-cover">
+        <h3 class="font-bold text-lg">John Doe</h3>
+        <p class="text-sm text-gray-700">Lead Developer & Co-founder</p>
+        <p class="text-xs text-gray-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          Passionate about building reliable apps that simplify global currency conversions.
+        </p>
+      </div>
+      <div class="group bg-white/20 backdrop-blur-lg rounded-2xl p-4 shadow-lg border border-gray-200 hover:scale-105 transition-transform text-center animate-slideInUp delay-100">
+        <img src="/static/images/founder2.jpg" alt="Michael Smith" class="w-24 h-24 mx-auto rounded-full mb-3 border-2 border-purple-500 object-cover">
+        <h3 class="font-bold text-lg">Michael Smith</h3>
+        <p class="text-sm text-gray-700">Backend Specialist</p>
+        <p class="text-xs text-gray-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          Ensures the app’s calculations are accurate and reliable under all conditions.
+        </p>
+      </div>
+      <div class="group bg-white/20 backdrop-blur-lg rounded-2xl p-4 shadow-lg border border-gray-200 hover:scale-105 transition-transform text-center animate-slideInUp delay-200">
+        <img src="/static/images/founder3.jpg" alt="David Lee" class="w-24 h-24 mx-auto rounded-full mb-3 border-2 border-green-500 object-cover">
+        <h3 class="font-bold text-lg">David Lee</h3>
+        <p class="text-sm text-gray-700">UI/UX Designer</p>
+        <p class="text-xs text-gray-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          Designs intuitive interfaces to make your experience seamless and beautiful.
+        </p>
+      </div>
+      <div class="group bg-white/20 backdrop-blur-lg rounded-2xl p-4 shadow-lg border border-gray-200 hover:scale-105 transition-transform text-center animate-slideInUp delay-300">
+        <img src="/static/images/founder4.jpg" alt="Samuel Johnson" class="w-24 h-24 mx-auto rounded-full mb-3 border-2 border-red-500 object-cover">
+        <h3 class="font-bold text-lg">Samuel Johnson</h3>
+        <p class="text-sm text-gray-700">Marketing Lead</p>
+        <p class="text-xs text-gray-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          Connects our app with users worldwide through innovative campaigns.
+        </p>
+      </div>
+      <div class="group bg-white/20 backdrop-blur-lg rounded-2xl p-4 shadow-lg border border-gray-200 hover:scale-105 transition-transform text-center animate-slideInUp delay-400">
+        <img src="/static/images/founder5.jpg" alt="Sophia Kim" class="w-24 h-24 mx-auto rounded-full mb-3 border-2 border-yellow-500 object-cover">
+        <h3 class="font-bold text-lg">Sophia Kim</h3>
+        <p class="text-sm text-gray-700">Product Manager</p>
+        <p class="text-xs text-gray-500 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          Guides product direction ensuring features meet user needs effectively.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Us Section -->
+<section class="max-w-3xl mx-auto mb-20 relative z-10">
+  <h2 class="text-3xl font-bold mb-6 text-center animate-fadeIn">Contact Us</h2>
+
+  <!-- Popup notification inside the section -->
+  <div id="contact-popup" class="mx-auto mb-6 max-w-md bg-green-500 text-white px-6 py-4 rounded-2xl shadow-lg opacity-0 transition-all duration-500 text-center">
+    Message sent successfully!
+  </div>
+
+  <form id="contact-form" class="bg-white/20 backdrop-blur-lg rounded-2xl p-8 shadow-lg border border-gray-200 grid gap-4">
+    <input type="text" name="name" placeholder="Your Name" class="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400 w-full" required>
+    <input type="email" name="email" placeholder="Your Email" class="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400 w-full" required>
+    <textarea name="message" placeholder="Your Message" rows="4" class="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-400 w-full" required></textarea>
+    <button type="submit" class="py-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold rounded-2xl shadow-lg transition-transform duration-300 hover:scale-105">
+      Send Message
+    </button>
+  </form>
+</section>
+
+<script>
+document.getElementById('contact-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch('/send_message', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (response.ok) {
+      showPopup("Message sent successfully!", true);
+      form.reset();
+    } else {
+      showPopup("Failed to send message. Try again.", false);
+    }
+  } catch (error) {
+    showPopup("An error occurred. Try again.", false);
+  }
+});
+
+// Popup function
+function showPopup(message, success=true){
+  const popup = document.getElementById('contact-popup');
+  popup.innerText = message;
+  popup.style.backgroundColor = success ? 'rgba(72, 187, 120, 0.95)' : 'rgba(220, 38, 38, 0.95)';
+  popup.classList.remove('opacity-0');
+  popup.classList.add('opacity-100');
+  setTimeout(() => {
+    popup.classList.add('opacity-0');
+  }, 4000);
+}
+</script>
+
+<style>
+#contact-popup {
+  transition: all 0.5s ease;
+}
+</style>
+
+
+<!-- Animations & Counters -->
+<style>
+@keyframes fadeInUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+.animate-fadeInUp { animation: fadeInUp 0.8s ease forwards; }
+@keyframes slideInLeft { from {opacity:0; transform:translateX(-20px);} to {opacity:1; transform:translateX(0);} }
+.animate-slideInLeft { animation: slideInLeft 0.8s ease forwards; }
+@keyframes slideInRight { from {opacity:0; transform:translateX(20px);} to {opacity:1; transform:translateX(0);} }
+.animate-slideInRight { animation: slideInRight 0.8s ease forwards; }
+@keyframes slideInUp { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+.animate-slideInUp { animation: slideInUp 0.8s ease forwards; }
+@keyframes bubbleMove {
+  0% { transform: translateY(0) translateX(0); }
+  50% { transform: translateY(-30px) translateX(20px); }
+  100% { transform: translateY(0) translateX(0); }
+}
+.animate-bubble {
+  animation: bubbleMove 12s ease-in-out infinite alternate;
+}
+.delay-100 { animation-delay:0.1s; }
+.delay-200 { animation-delay:0.2s; }
+.delay-300 { animation-delay:0.3s; }
+.delay-400 { animation-delay:0.4s; }
+.delay-2000 { animation-delay:2s; }
+.delay-4000 { animation-delay:4s; }
+.delay-6000 { animation-delay:6s; }
+</style>
+
+<script>
+// Counter animation
+const counters = document.querySelectorAll('.counter');
+counters.forEach(counter => {
+  const updateCount = () => {
+    const target = +counter.getAttribute('data-target');
+    const count = +counter.innerText;
+    const increment = target / 100;
+    if(count < target) {
+      counter.innerText = Math.ceil(count + increment);
+      requestAnimationFrame(updateCount);
+    } else {
+      counter.innerText = target;
+    }
+  };
+  updateCount();
+});
+</script>
+{% endblock %}

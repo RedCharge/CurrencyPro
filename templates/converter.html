@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="relative min-h-screen bg-cover bg-center flex items-center justify-center" style="background-image: url('https://images.unsplash.com/photo-1622662124723-5c60aafebd4f?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
+  <!-- Black Overlay -->
+  <div class="absolute inset-0 bg-black/60"></div>
+
+  <!-- Glass Card -->
+  <div id="converter-card" class="relative z-10 w-full max-w-lg bg-white/10 backdrop-blur-lg rounded-2xl p-10 shadow-2xl border border-white/20 transition-all duration-300 hover:shadow-[0_0_40px_rgba(59,130,246,0.5)] hover:scale-105">
+    <h1 class="text-3xl font-bold mb-8 text-center text-white">Currency Converter</h1>
+
+    <form method="POST" class="flex flex-col gap-5" id="converter-form">
+      <!-- Amount Input -->
+      <div class="flex flex-col">
+        <label for="amount" class="mb-2 text-white font-bold text-lg">Amount</label>
+        <input type="number" step="0.01" id="amount" name="amount" value="{{ amount }}" required
+               class="p-4 rounded-xl bg-white/20 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" placeholder="Enter amount">
+      </div>
+
+      <!-- Currency Selection -->
+      <div class="relative flex flex-col gap-4">
+        <div class="flex flex-col">
+          <label for="from_currency" class="mb-2 text-white font-bold text-lg">From</label>
+          <select id="from_currency" name="from_currency"
+                  class="p-3 rounded-xl bg-white/20 text-blue-400 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 w-full appearance-none">
+            {% for code, name in currencies.items() %}
+              <option value="{{ code }}" class="text-blue-400 font-bold">{{ code }} - {{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="flex justify-center">
+          <span class="text-white text-xl">↓</span>
+        </div>
+
+        <div class="flex flex-col">
+          <label for="to_currency" class="mb-2 text-white font-bold text-lg">To</label>
+          <select id="to_currency" name="to_currency"
+                  class="p-3 rounded-xl bg-white/20 text-blue-400 font-bold focus:outline-none focus:ring-2 focus:ring-blue-400 w-full appearance-none">
+            {% for code, name in currencies.items() %}
+              <option value="{{ code }}" class="text-blue-400 font-bold">{{ code }} - {{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Convert Button -->
+      <button type="submit"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-xl shadow-lg transition duration-300">
+        Convert
+      </button>
+    </form>
+
+    <!-- Result Container -->
+    <div id="result-container">
+      {% if result %}
+      <div class="mt-8 p-6 bg-white/20 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30 text-center transform scale-90 opacity-0 animate-result transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] hover:scale-105">
+        <h2 class="text-2xl font-semibold text-white mb-2">Conversion Result</h2>
+        <p class="text-xl text-white">
+          <span class="font-bold">{{ amount }} {{ from_currency }}</span> =
+          <span class="font-bold text-blue-400">{{ result }} {{ to_currency }}</span>
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Floating particles -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce" style="top:10%; left:20%;"></div>
+    <div class="absolute w-3 h-3 bg-white/10 rounded-full animate-bounce" style="top:50%; left:70%;"></div>
+    <div class="absolute w-1.5 h-1.5 bg-white/30 rounded-full animate-bounce" style="top:80%; left:40%;"></div>
+  </div>
+</div>
+
+<style>
+  @keyframes resultAppear { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  .animate-result { animation: resultAppear 0.5s ease-out forwards; }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('converter-form');
+  const resultContainer = document.getElementById('result-container');
+  const fromCurrency = document.getElementById('from_currency');
+  const toCurrency = document.getElementById('to_currency');
+  const amountInput = document.getElementById('amount');
+  const card = document.getElementById('converter-card');
+
+  // --- Apply Premium Settings ---
+  const theme = localStorage.getItem('theme') || 'light';
+  if(theme === 'dark') {
+    document.documentElement.classList.add('dark');
+    card.classList.add('bg-white/10', 'backdrop-blur-lg'); // preserve glass effect
+    amountInput.classList.add('text-white', 'bg-white/20');
+  }
+
+  const defaultFrom = localStorage.getItem('defaultFrom');
+  const defaultTo = localStorage.getItem('defaultTo');
+  if(defaultFrom) fromCurrency.value = defaultFrom;
+  if(defaultTo) toCurrency.value = defaultTo;
+
+  const precision = localStorage.getItem('precision') || 2;
+
+  // --- AJAX Conversion with precision ---
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    fetch('', { method: 'POST', body: formData })
+      .then(response => response.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        let newResult = doc.getElementById('result-container').innerHTML;
+
+        // Format result with precision
+        const tempEl = document.createElement('div');
+        tempEl.innerHTML = newResult;
+        const resultSpan = tempEl.querySelector('span.font-bold.text-blue-400');
+        if(resultSpan){
+          const val = parseFloat(resultSpan.textContent);
+          resultSpan.textContent = val.toFixed(precision);
+        }
+
+        resultContainer.innerHTML = tempEl.innerHTML;
+      })
+      .catch(error => console.error('Error:', error));
+  });
+});
+</script>
+{% endblock %}
