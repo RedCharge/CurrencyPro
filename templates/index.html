@@ -1,10 +1,13 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 
 {% block content %}
-<div class="relative w-full min-h-screen flex items-center justify-center px-6 pb-12 z-10">
+<div class="relative w-full min-h-screen flex items-center justify-center px-6 z-10">
 
-  <!-- Background image -->
-  <div class="absolute inset-0 h-full w-full bg-cover bg-center" 
+  <!-- Animated gradient background -->
+  <div class="absolute inset-0 h-full w-full bg-gradient-to-r from-blue-900 via-blue-600 to-blue-1000 animate-gradientMove"></div>
+
+  <!-- Background image (blended with gradient) -->
+  <div class="absolute inset-0 h-full w-full bg-cover bg-center mix-blend-overlay" 
        style="background-image: url('https://images.unsplash.com/photo-1711606815631-38d32cdaec3e?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
   </div>
 
@@ -12,35 +15,66 @@
   <div class="absolute inset-0 bg-black/40"></div>
 
   <!-- Glass card -->
-  <div class="relative z-10 max-w-5xl mx-auto bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-12 text-center space-y-6">
-    <h1 class="text-5xl font-bold text-white">Premium Currency Converter</h1>
-    <p class="text-white text-lg leading-relaxed">
-      Convert currencies instantly, track live rates, and explore historical trends.
-      Enjoy a modern interface with a glassmorphic design that makes your experience smooth and premium.
+  <div class="relative z-10 max-w-5xl mx-auto bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-12 text-center space-y-6 
+              transform opacity-0 translate-y-6 animate-fadeInUp">
+    <h1 class="text-5xl font-bold text-white animate-fadeIn delay-200">Premium Currency Converter</h1>
+    <p class="text-white text-lg leading-relaxed animate-fadeIn delay-400">
+      CurrencyPro is your premium all-in-one currency management app, designed to give you real-time exchange insights, quick conversions, and a personalized dashboard. 
+      With its sleek design and powerful features, managing currencies has never been this smooth and professional.
     </p>
 
     <div class="flex flex-wrap justify-center gap-6 mt-6">
-      <div class="bg-blue-100/40 rounded-2xl p-6 w-60 hover:scale-105 transition transform shadow-lg">
+      <div class="bg-blue-100/40 rounded-2xl p-6 w-60 shadow-lg transform transition duration-500 hover:scale-110 hover:shadow-2xl hover:bg-blue-200/50">
         <img src="https://img.icons8.com/ios-filled/64/ffffff/money.png" class="mx-auto mb-4 w-16 h-16"/>
         <h3 class="text-lg font-semibold mb-2 text-white">Live Rates</h3>
         <p class="text-white text-sm">Track real-time exchange rates for major currencies worldwide.</p>
       </div>
-      <div class="bg-blue-100/40 rounded-2xl p-6 w-60 hover:scale-105 transition transform shadow-lg">
+      <div class="bg-blue-100/40 rounded-2xl p-6 w-60 shadow-lg transform transition duration-500 hover:scale-110 hover:shadow-2xl hover:bg-blue-200/50">
         <img src="https://img.icons8.com/ios-filled/64/ffffff/exchange.png" class="mx-auto mb-4 w-16 h-16"/>
         <h3 class="text-lg font-semibold mb-2 text-white">Easy Conversion</h3>
         <p class="text-white text-sm">Convert amounts between currencies instantly and accurately.</p>
       </div>
-      <div class="bg-blue-100/40 rounded-2xl p-6 w-60 hover:scale-105 transition transform shadow-lg">
-        <img src="https://img.icons8.com/ios-filled/64/ffffff/chart.png" class="mx-auto mb-4 w-16 h-16"/>
+      <div class="bg-blue-100/40 rounded-2xl p-6 w-60 shadow-lg transform transition duration-500 hover:scale-110 hover:shadow-2xl hover:bg-blue-200/50">
+        <img src="\static\historical-data.png" class="mx-auto mb-4 w-16 h-16"/>
         <h3 class="text-lg font-semibold mb-2 text-white">Historical Trends</h3>
         <p class="text-white text-sm">Analyze currency performance over time to make informed decisions.</p>
       </div>
     </div>
 
     <a href="{{ url_for('dashboard') }}" 
-       class="inline-block mt-8 bg-blue-500/70 hover:bg-blue-600/70 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-105">
+       class="inline-block mt-8 bg-blue-500/70 hover:bg-blue-600/70 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition transform hover:scale-110 hover:shadow-xl">
        Go to Dashboard
     </a>
   </div>
 </div>
+
+<!-- Animations -->
+<style>
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .animate-fadeInUp {
+    animation: fadeInUp 1s ease forwards;
+  }
+  .animate-fadeIn {
+    animation: fadeIn 1s ease forwards;
+  }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-400 { animation-delay: 0.4s; }
+
+  .animate-gradientMove {
+    background-size: 300% 300%;
+    animation: gradientMove 15s ease infinite;
+  }
+</style>
 {% endblock %}

@@ -1,18 +1,18 @@
-from flask import Flask, render_template, request, jsonify, flash, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 import requests
 from datetime import datetime, timedelta
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from flask_mail import Mail, Message
+import os
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key'  # needed for flash messages
+
+# ---------------- SECRET KEY ----------------
+app.secret_key = os.environ.get("SECRET_KEY", "fallback-secret")
 
 # ---------------- API KEYS ----------------
-EXCHANGE_API_KEY = "6a98bb7a5f8b3ab44cdee0a3"
-CURRENCYFREAKS_API_KEY = "e89b09bac220405699db174c623ad232"
-NEWS_API_KEY = "a4fb820d819142e389b430bddbc3cd89"
+EXCHANGE_API_KEY = os.environ.get("EXCHANGE_API_KEY")
+CURRENCYFREAKS_API_KEY = os.environ.get("CURRENCYFREAKS_API_KEY")
+NEWS_API_KEY = os.environ.get("NEWS_API_KEY")
 
 # ---------------- BASE URLS ----------------
 EXCHANGE_API_URL = f"https://v6.exchangerate-api.com/v6/{EXCHANGE_API_KEY}/latest/USD"
@@ -20,7 +20,7 @@ CURRENCYFREAKS_URL = "https://api.currencyfreaks.com/v2.0/rates/timeseries"
 NEWS_URL = "https://newsapi.org/v2/top-headlines?category=business&language=en"
 
 # ---------------- 8 Top Rates ----------------
-TOP_CURRENCIES = ["USD","EUR","GBP","JPY","CNY","GHS","NGN","AUD"]
+TOP_CURRENCIES = ["USD", "EUR", "GBP", "JPY", "CNY", "GHS", "NGN", "AUD"]
 
 # ---------------- 50+ CURRENCIES ----------------
 CURRENCIES = {
@@ -121,7 +121,7 @@ def dashboard():
             current_date += timedelta(days=1)
     except:
         history_labels = [(start_date + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)]
-        history_values = [0]*7
+        history_values = [0] * 7
 
     return render_template(
         "dashboard.html",
@@ -146,11 +146,10 @@ def api_finance_news():
     try:
         res = requests.get(f"{NEWS_URL}&apiKey={NEWS_API_KEY}")
         data = res.json()
-        articles = [ {
-            "title": article["title"],
-            "url": article["url"],
-            "source": article["source"]["name"]
-        } for article in data.get("articles", [])[:10] ]
+        articles = [
+            {"title": a["title"], "url": a["url"], "source": a["source"]["name"]}
+            for a in data.get("articles", [])[:10]
+        ]
     except Exception as e:
         print("Error fetching news:", e)
         articles = []
@@ -165,16 +164,13 @@ def about():
 def settings():
     return render_template("settings.html")
 
-
-
 # ---------------- MAIL CONFIG ----------------
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'redcharger000@gmail.com'   # your Gmail
-app.config['MAIL_PASSWORD'] = 'mwgz jbnd hute ktqz'  # use App Password!
+app.config['MAIL_USERNAME'] = os.environ.get("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.environ.get("MAIL_PASSWORD")
 mail = Mail(app)
-
 
 @app.route("/send_message", methods=["POST"])
 def send_message():
@@ -189,7 +185,7 @@ def send_message():
         msg = Message(
             subject=f"New Contact Message from {name}",
             sender=email,
-            recipients=["redcharger000@gmail.com"],  # your Gmail
+            recipients=[os.environ.get("MAIL_USERNAME")],
             body=f"Name: {name}\nEmail: {email}\n\nMessage:\n{message}"
         )
         mail.send(msg)
@@ -197,7 +193,6 @@ def send_message():
     except Exception as e:
         print("Error sending email:", e)
         return "Failed to send message", 500
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
