@@ -14,9 +14,9 @@
 
       <!-- Default Conversion Pair -->
       <div class="flex items-center gap-4 group animate-slideInLeft">
-        <svg class="w-6 h-6 text-blue-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"/>
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 1v2m0 18v2m11-11h-2M3 12H1m16.364-7.364l-1.414 1.414M6.05 17.95l-1.414 1.414M17.95 17.95l1.414 1.414M6.05 6.05L4.636 4.636"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 1v2m0 18v2m11-11h-2M3 12H1"/>
         </svg>
         <div class="flex-1 flex flex-col relative">
           <label class="mb-1 font-semibold text-gray-700">Default Conversion Pair</label>
@@ -44,7 +44,7 @@
 
       <!-- Conversion Precision -->
       <div class="flex items-center gap-4 group animate-slideInRight delay-100">
-        <svg class="w-6 h-6 text-purple-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 text-purple-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m-4-4h8"/>
         </svg>
         <div class="flex-1 flex flex-col">
@@ -64,7 +64,7 @@
 
       <!-- Auto-Update Rate -->
       <div class="flex items-center gap-4 group animate-slideInLeft delay-200">
-        <svg class="w-6 h-6 text-green-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v6h6"/>
           <path stroke-linecap="round" stroke-linejoin="round" d="M20 20v-6h-6"/>
         </svg>
@@ -81,22 +81,26 @@
 
       <!-- Theme & Appearance -->
       <div class="flex items-center gap-4 group animate-slideInRight delay-300">
-        <svg class="w-6 h-6 text-yellow-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-10h-1M3.34 12h-1m15.364 5.364l-.707-.707M6.343 6.343l-.707-.707M17.657 6.343l.707-.707M6.343 17.657l.707-.707M12 7a5 5 0 100 10 5 5 0 000-10z"/>
+        <svg class="w-6 h-6 text-yellow-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m8.66-10h-1M3.34 12h-1"/>
         </svg>
-        <div class="flex-1 flex flex-col">
+        <div class="flex-1 flex flex-col relative">
           <label class="mb-1 font-semibold text-gray-700">Theme</label>
           <select id="theme-select" class="p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-yellow-400 w-full">
             <option value="light">Light</option>
             <option value="dark">Dark</option>
           </select>
+          <!-- Coming Soon overlay -->
+          <div class="absolute inset-0 bg-white/30 backdrop-blur-md rounded-xl flex items-center justify-center">
+            <span class="text-gray-800 font-bold text-lg">Coming Soon</span>
+          </div>
         </div>
       </div>
       <hr class="border-gray-200">
 
       <!-- Notifications -->
       <div class="flex items-center gap-4 group animate-slideInLeft delay-400">
-        <svg class="w-6 h-6 text-red-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405M19 13v-2a7 7 0 10-14 0v2l-2 2v1h18v-1l-2-2z"/>
         </svg>
         <div class="flex-1 flex flex-col">
@@ -113,7 +117,7 @@
       <!-- Offline Mode Toggle -->
       <div class="flex items-center justify-between group animate-slideInRight delay-500">
         <span class="flex items-center gap-2">
-          <svg class="w-6 h-6 text-indigo-500 flex-shrink-0 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg class="w-6 h-6 text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v-4a8 8 0 1116 0v4"/>
           </svg>
           <label class="font-semibold text-gray-700">Offline Mode</label>
@@ -167,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Apply theme immediately
   applyTheme(themeSelect.value);
-
   themeSelect.addEventListener('change', () => applyTheme(themeSelect.value));
 
   function applyTheme(theme) {
@@ -190,6 +193,46 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('notifications', notificationSelect.value);
     localStorage.setItem('offlineMode', offlineMode.checked);
     alert('Settings saved successfully!');
+  });
+
+  // ---------------- NOTIFICATION + OFFLINE SUPPORT ----------------
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(() => console.log("SW registered"));
+  }
+
+  Notification.requestPermission();
+
+  function showAndSaveNotification(title, body) {
+    if (Notification.permission === "granted") {
+      new Notification(title, { body });
+    }
+    localStorage.setItem("lastNotification", JSON.stringify({ title, body, time: Date.now() }));
+  }
+
+  if (!!window.EventSource) {
+    const source = new EventSource("/stream");
+    source.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      const title = data.type === "rate" ? "Currency Update" : "Finance News";
+      showAndSaveNotification(title, data.message);
+    };
+  }
+
+  window.addEventListener("load", () => {
+    const saved = localStorage.getItem("lastNotification");
+    if (saved) {
+      const { title, body } = JSON.parse(saved);
+      showAndSaveNotification(title + " (last update)", body);
+    }
+  });
+
+  window.addEventListener("online", () => {
+    const saved = localStorage.getItem("lastNotification");
+    if (saved) {
+      const { title, body } = JSON.parse(saved);
+      showAndSaveNotification(title + " (while offline)", body);
+    }
   });
 });
 </script>

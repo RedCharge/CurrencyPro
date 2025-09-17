@@ -1,8 +1,21 @@
-from flask import Flask, render_template, request, jsonify
+#!/usr/bin/env python3
+# _*_ coding: utf-8 _*_
+"""
+Flask application for currency conversion, live exchange rates,
+financial news, and notifications.
+
+Features:
+- Quick currency converter and API endpoint.
+- Dashboard with live rates and 7-day USD→EUR trend.
+- Streaming updates for USD→GHS and finance news headlines.
+- Contact form with email notifications.
+- Static pages for About, Settings, and service worker support.
+"""
+from flask import Flask, render_template, request, jsonify, Response
 import requests
 from datetime import datetime, timedelta
 from flask_mail import Mail, Message
-import os
+import os, json, time
 
 app = Flask(__name__)
 
@@ -155,6 +168,34 @@ def api_finance_news():
         articles = []
     return jsonify(articles)
 
+# ---------------- NOTIFICATION STREAM ----------------
+@app.route("/stream")
+def stream():
+    def event_stream():
+        last_data = {}
+        while True:
+            try:
+                # Currency update check
+                live_data = requests.get(EXCHANGE_API_URL).json()
+                conversion_rates = live_data.get("conversion_rates", {})
+                usd_ghs = conversion_rates.get("GHS", 0)
+                if last_data.get("rate") != usd_ghs:
+                    last_data["rate"] = usd_ghs
+                    yield f"data: {json.dumps({'type':'rate','message':f'USD→GHS now {usd_ghs}'})}\n\n"
+
+                # News update check
+                res = requests.get(f"{NEWS_URL}&apiKey={NEWS_API_KEY}")
+                data = res.json()
+                if data.get("articles"):
+                    headline = data["articles"][0]["title"]
+                    if last_data.get("news") != headline:
+                        last_data["news"] = headline
+                        yield f"data: {json.dumps({'type':'news','message':headline})}\n\n"
+            except Exception as e:
+                print("Stream error:", e)
+            time.sleep(60)
+    return Response(event_stream(), mimetype="text/event-stream")
+
 # ---------------- ABOUT & SETTINGS ----------------
 @app.route("/about")
 def about():
@@ -163,6 +204,11 @@ def about():
 @app.route("/settings")
 def settings():
     return render_template("settings.html")
+
+# ---------------- SERVICE WORKER ----------------
+@app.route("/service-worker.js")
+def service_worker():
+    return app.send_static_file("service-worker.js")
 
 # ---------------- MAIL CONFIG ----------------
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
