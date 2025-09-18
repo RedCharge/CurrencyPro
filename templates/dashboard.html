@@ -29,7 +29,7 @@
     <h2 class="text-3xl font-bold mb-4 text-gray-900">Live Currency Rates</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
       {% for code, rate in rates.items() %}
-        <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-6 text-center shadow-xl border border-white/30">
+        <div id="card-{{ code }}" class="rate-card bg-white/20 backdrop-blur-lg rounded-2xl p-6 text-center shadow-xl border border-white/30 transition duration-300">
           <h3 class="text-xl font-semibold text-gray-900 mb-2">USD → {{ code }}</h3>
           <p id="rate-{{ code }}" class="text-2xl font-bold text-gray-900">{{ rate }}</p>
         </div>
@@ -46,12 +46,8 @@
   <!-- USD → GHS 7-Day Trend Chart -->
   <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30 relative">
     <h2 class="text-3xl font-bold mb-4 text-gray-900">USD → GHS (7-Day Trend)</h2>
-
-    <!-- Chart Canvas -->
     <div class="relative">
       <canvas id="usdGhsChart" class="rounded-xl"></canvas>
-
-      <!-- Overlay -->
       <div class="absolute inset-0 bg-black/30 flex items-center justify-center rounded-xl">
         <span class="text-white text-2xl font-bold">Coming Soon</span>
       </div>
@@ -81,61 +77,38 @@
       `${payload.amount} ${payload.from_currency} = ${data.result} ${payload.to_currency}`;
   });
 
-  // ---------------- Smooth Count Animation ----------------
-  function animateValue(el, start, end, duration) {
-    const startTime = performance.now();
-
-    function step(now) {
-      const progress = Math.min((now - startTime) / duration, 1);
-      const value = start + (end - start) * progress;
-      el.textContent = value.toFixed(4); // 4 decimals for FX rates
-
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      }
-    }
-
-    requestAnimationFrame(step);
-  }
-
-  // ---------------- Auto-refresh Top Rates with Animation ----------------
+  // ---------------- Auto-refresh Top Rates ----------------
   async function refreshRates() {
-    try {
-      const res = await fetch("{{ url_for('api_live_rates') }}");
-      const data = await res.json();
+    const res = await fetch("{{ url_for('api_live_rates') }}");
+    const data = await res.json();
+    for (const [code, newRate] of Object.entries(data)) {
+      const el = document.getElementById(`rate-${code}`);
+      const card = document.getElementById(`card-${code}`);
+      if (el && card) {
+        const oldRate = parseFloat(el.textContent);
+        el.textContent = newRate;
 
-      for (const [code, rate] of Object.entries(data)) {
-        const el = document.getElementById(`rate-${code}`);
-        if (el) {
-          const oldValue = parseFloat(el.textContent) || 0;
-          const newValue = parseFloat(rate);
-
-          // Animate from old → new
-          animateValue(el, oldValue, newValue, 800);
-
-          // Flash color
-          if (newValue > oldValue) {
-            el.classList.add("text-green-600");
-          } else if (newValue < oldValue) {
-            el.classList.add("text-red-600");
+        if (!isNaN(oldRate)) {
+          if (newRate > oldRate) {
+            el.classList.add("glow-green");
+            card.classList.add("pulse-green");
+            setTimeout(() => {
+              el.classList.remove("glow-green");
+              card.classList.remove("pulse-green");
+            }, 1500);
+          } else if (newRate < oldRate) {
+            el.classList.add("glow-red");
+            card.classList.add("pulse-red");
+            setTimeout(() => {
+              el.classList.remove("glow-red");
+              card.classList.remove("pulse-red");
+            }, 1500);
           }
-
-          // Reset after animation
-          setTimeout(() => {
-            el.classList.remove("text-green-600", "text-red-600");
-          }, 800);
         }
       }
-    } catch (err) {
-      console.error("Error refreshing rates:", err);
     }
   }
-
-  // First run immediately
-  refreshRates();
-
-  // Refresh every 30s
-  setInterval(refreshRates, 30000);
+  setInterval(refreshRates, 60000);
 
   // ---------------- Fetch Finance News ----------------
   async function fetchFinanceNews() {
@@ -156,7 +129,7 @@
     }
   }
   fetchFinanceNews();
-  setInterval(fetchFinanceNews, 300000); // Refresh every 5 min
+  setInterval(fetchFinanceNews, 300000);
 
   // ---------------- USD → GHS 7-Day Trend Chart ----------------
   async function renderUsdGhsChart() {
@@ -164,7 +137,6 @@
       const endDate = new Date();
       const startDate = new Date();
       startDate.setDate(endDate.getDate() - 6);
-
       const formatDate = (d) => d.toISOString().split('T')[0];
 
       const response = await fetch(
@@ -172,19 +144,16 @@
       );
       const data = await response.json();
       const rates = data.rates;
-
       const labels = [];
       const values = [];
       let lastKnown = null;
 
-      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      for(let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
         const dateStr = d.toISOString().split('T')[0];
         labels.push(dateStr);
-
-        if (rates[dateStr] && rates[dateStr]["GHS"]) {
-          const val = parseFloat(rates[dateStr]["GHS"]);
-          values.push(val);
-          lastKnown = val;
+        if(rates[dateStr] && rates[dateStr]["GHS"]) {
+          values.push(parseFloat(rates[dateStr]["GHS"]));
+          lastKnown = parseFloat(rates[dateStr]["GHS"]);
         } else {
           values.push(lastKnown || 0);
         }
@@ -221,4 +190,31 @@
   }
   renderUsdGhsChart();
 </script>
+
+<!-- Tailwind custom animations -->
+<style>
+  /* Number glow */
+  @keyframes glowUp {
+    0% { text-shadow: 0 0 5px #22c55e, 0 0 10px #22c55e; color: #22c55e; }
+    100% { text-shadow: none; color: #111827; }
+  }
+  @keyframes glowDown {
+    0% { text-shadow: 0 0 5px #ef4444, 0 0 10px #ef4444; color: #ef4444; }
+    100% { text-shadow: none; color: #111827; }
+  }
+  .glow-green { animation: glowUp 1.5s ease-in-out; }
+  .glow-red { animation: glowDown 1.5s ease-in-out; }
+
+  /* Card pulse */
+  @keyframes pulseGreen {
+    0% { box-shadow: 0 0 10px #22c55e; }
+    100% { box-shadow: none; }
+  }
+  @keyframes pulseRed {
+    0% { box-shadow: 0 0 10px #ef4444; }
+    100% { box-shadow: none; }
+  }
+  .pulse-green { animation: pulseGreen 1.5s ease-in-out; }
+  .pulse-red { animation: pulseRed 1.5s ease-in-out; }
+</style>
 {% endblock %}
