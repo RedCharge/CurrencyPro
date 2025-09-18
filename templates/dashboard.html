@@ -178,6 +178,7 @@ async function renderUsdGhsChart() {
 renderUsdGhsChart();
 
 
+<script>
 // ---------------- Smooth Count Animation ----------------
 function animateValue(el, start, end, duration) {
   const startTime = performance.now();
@@ -185,7 +186,7 @@ function animateValue(el, start, end, duration) {
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
     const value = start + (end - start) * progress;
-    el.textContent = value.toFixed(2);
+    el.textContent = value.toFixed(4); // 4 decimals for FX rates
 
     if (progress < 1) {
       requestAnimationFrame(step);
@@ -195,35 +196,44 @@ function animateValue(el, start, end, duration) {
   requestAnimationFrame(step);
 }
 
-// ---------------- Auto-refresh Top Rates ----------------
+// ---------------- Auto-refresh Top Rates with Animation ----------------
 async function refreshRates() {
-  const res = await fetch("{{ url_for('api_live_rates') }}");
-  const data = await res.json();
+  try {
+    const res = await fetch("{{ url_for('api_live_rates') }}");
+    const data = await res.json();
 
-  for (const [code, rate] of Object.entries(data)) {
-    const el = document.getElementById(`rate-${code}`);
-    if (el) {
-      const oldValue = parseFloat(el.textContent) || 0;
-      const newValue = parseFloat(rate);
+    for (const [code, rate] of Object.entries(data)) {
+      const el = document.getElementById(`rate-${code}`);
+      if (el) {
+        const oldValue = parseFloat(el.textContent) || 0;
+        const newValue = parseFloat(rate);
 
-      // Animate change
-      animateValue(el, oldValue, newValue, 800);
+        // Animate from old → new
+        animateValue(el, oldValue, newValue, 800);
 
-      // Flash color
-      if (newValue > oldValue) {
-        el.classList.add("text-green-600");
-      } else if (newValue < oldValue) {
-        el.classList.add("text-red-600");
+        // Flash color
+        if (newValue > oldValue) {
+          el.classList.add("text-green-600");
+        } else if (newValue < oldValue) {
+          el.classList.add("text-red-600");
+        }
+
+        // Reset after animation
+        setTimeout(() => {
+          el.classList.remove("text-green-600", "text-red-600");
+        }, 800);
       }
-
-      setTimeout(() => {
-        el.classList.remove("text-green-600", "text-red-600");
-      }, 800);
     }
+  } catch (err) {
+    console.error("Error refreshing rates:", err);
   }
 }
+
+// First run immediately
+refreshRates();
 
 // Refresh every 30s
 setInterval(refreshRates, 30000);
 </script>
+
 {% endblock %}
