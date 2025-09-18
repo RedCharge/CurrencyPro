@@ -43,7 +43,7 @@
     <ul id="finance-news" class="space-y-3 max-h-[400px] overflow-y-auto"></ul>
   </div>
 
-    <!-- USD → GHS 7-Day Trend Chart -->
+  <!-- USD → GHS 7-Day Trend Chart -->
   <div class="bg-white/20 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30 relative">
     <h2 class="text-3xl font-bold mb-4 text-gray-900">USD → GHS (7-Day Trend)</h2>
 
@@ -57,7 +57,6 @@
       </div>
     </div>
   </div>
-
 
 </div>
 
@@ -82,16 +81,61 @@
       `${payload.amount} ${payload.from_currency} = ${data.result} ${payload.to_currency}`;
   });
 
-  // ---------------- Auto-refresh Top Rates ----------------
+  // ---------------- Smooth Count Animation ----------------
+  function animateValue(el, start, end, duration) {
+    const startTime = performance.now();
+
+    function step(now) {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const value = start + (end - start) * progress;
+      el.textContent = value.toFixed(4); // 4 decimals for FX rates
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  // ---------------- Auto-refresh Top Rates with Animation ----------------
   async function refreshRates() {
-    const res = await fetch("{{ url_for('api_live_rates') }}");
-    const data = await res.json();
-    for (const [code, rate] of Object.entries(data)) {
-      const el = document.getElementById(`rate-${code}`);
-      if(el) el.textContent = rate;
+    try {
+      const res = await fetch("{{ url_for('api_live_rates') }}");
+      const data = await res.json();
+
+      for (const [code, rate] of Object.entries(data)) {
+        const el = document.getElementById(`rate-${code}`);
+        if (el) {
+          const oldValue = parseFloat(el.textContent) || 0;
+          const newValue = parseFloat(rate);
+
+          // Animate from old → new
+          animateValue(el, oldValue, newValue, 800);
+
+          // Flash color
+          if (newValue > oldValue) {
+            el.classList.add("text-green-600");
+          } else if (newValue < oldValue) {
+            el.classList.add("text-red-600");
+          }
+
+          // Reset after animation
+          setTimeout(() => {
+            el.classList.remove("text-green-600", "text-red-600");
+          }, 800);
+        }
+      }
+    } catch (err) {
+      console.error("Error refreshing rates:", err);
     }
   }
-  setInterval(refreshRates, 60000);
+
+  // First run immediately
+  refreshRates();
+
+  // Refresh every 30s
+  setInterval(refreshRates, 30000);
 
   // ---------------- Fetch Finance News ----------------
   async function fetchFinanceNews() {
@@ -114,126 +158,67 @@
   fetchFinanceNews();
   setInterval(fetchFinanceNews, 300000); // Refresh every 5 min
 
- // ---------------- USD → GHS 7-Day Trend Chart ----------------
-async function renderUsdGhsChart() {
-  try {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(endDate.getDate() - 6);
+  // ---------------- USD → GHS 7-Day Trend Chart ----------------
+  async function renderUsdGhsChart() {
+    try {
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(endDate.getDate() - 6);
 
-    const formatDate = (d) => d.toISOString().split('T')[0];
+      const formatDate = (d) => d.toISOString().split('T')[0];
 
-    const response = await fetch(
-      `https://api.currencyfreaks.com/v2.0/rates/timeseries?apikey=a4fb820d819142e389b430bddbc3cd89&base=USD&symbols=GHS&start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}`
-    );
-    const data = await response.json();
-    const rates = data.rates;
+      const response = await fetch(
+        `https://api.currencyfreaks.com/v2.0/rates/timeseries?apikey=a4fb820d819142e389b430bddbc3cd89&base=USD&symbols=GHS&start_date=${formatDate(startDate)}&end_date=${formatDate(endDate)}`
+      );
+      const data = await response.json();
+      const rates = data.rates;
 
-    const labels = [];
-    const values = [];
-    let lastKnown = null;
+      const labels = [];
+      const values = [];
+      let lastKnown = null;
 
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-      const dateStr = d.toISOString().split('T')[0];
-      labels.push(dateStr);
+      for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const dateStr = d.toISOString().split('T')[0];
+        labels.push(dateStr);
 
-      if (rates[dateStr] && rates[dateStr]["GHS"]) {
-        const val = parseFloat(rates[dateStr]["GHS"]);
-        values.push(val);
-        lastKnown = val;
-      } else {
-        values.push(lastKnown || 0);
-      }
-    }
-
-    const ctx = document.getElementById("usdGhsChart").getContext("2d");
-    new Chart(ctx, {
-      type: "line",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "USD/GHS",
-          data: values,
-          borderColor: "rgba(75,192,192,1)",
-          backgroundColor: "rgba(75,192,192,0.2)",
-          fill: true,
-          tension: 0.3,
-          spanGaps: true
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { color: 'black' } },
-          y: { ticks: { color: 'black' }, beginAtZero: false }
+        if (rates[dateStr] && rates[dateStr]["GHS"]) {
+          const val = parseFloat(rates[dateStr]["GHS"]);
+          values.push(val);
+          lastKnown = val;
+        } else {
+          values.push(lastKnown || 0);
         }
       }
-    });
 
-  } catch (err) {
-    console.error("Error rendering USD/GHS chart:", err);
-  }
-}
-renderUsdGhsChart();
-
-
-<script>
-// ---------------- Smooth Count Animation ----------------
-function animateValue(el, start, end, duration) {
-  const startTime = performance.now();
-
-  function step(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    const value = start + (end - start) * progress;
-    el.textContent = value.toFixed(4); // 4 decimals for FX rates
-
-    if (progress < 1) {
-      requestAnimationFrame(step);
-    }
-  }
-
-  requestAnimationFrame(step);
-}
-
-// ---------------- Auto-refresh Top Rates with Animation ----------------
-async function refreshRates() {
-  try {
-    const res = await fetch("{{ url_for('api_live_rates') }}");
-    const data = await res.json();
-
-    for (const [code, rate] of Object.entries(data)) {
-      const el = document.getElementById(`rate-${code}`);
-      if (el) {
-        const oldValue = parseFloat(el.textContent) || 0;
-        const newValue = parseFloat(rate);
-
-        // Animate from old → new
-        animateValue(el, oldValue, newValue, 800);
-
-        // Flash color
-        if (newValue > oldValue) {
-          el.classList.add("text-green-600");
-        } else if (newValue < oldValue) {
-          el.classList.add("text-red-600");
+      const ctx = document.getElementById("usdGhsChart").getContext("2d");
+      new Chart(ctx, {
+        type: "line",
+        data: {
+          labels: labels,
+          datasets: [{
+            label: "USD/GHS",
+            data: values,
+            borderColor: "rgba(75,192,192,1)",
+            backgroundColor: "rgba(75,192,192,0.2)",
+            fill: true,
+            tension: 0.3,
+            spanGaps: true
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: 'black' } },
+            y: { ticks: { color: 'black' }, beginAtZero: false }
+          }
         }
+      });
 
-        // Reset after animation
-        setTimeout(() => {
-          el.classList.remove("text-green-600", "text-red-600");
-        }, 800);
-      }
+    } catch (err) {
+      console.error("Error rendering USD/GHS chart:", err);
     }
-  } catch (err) {
-    console.error("Error refreshing rates:", err);
   }
-}
-
-// First run immediately
-refreshRates();
-
-// Refresh every 30s
-setInterval(refreshRates, 30000);
+  renderUsdGhsChart();
 </script>
-
 {% endblock %}
